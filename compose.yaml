@@ -5,6 +5,24 @@ services:
       - "127.0.0.1:5432:5432"
     env_file:
       - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  amazon_s3:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    command: server /data --console-address ":9001"
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    env_file:
+      - .env
+    volumes:
+      - minio_data:/data
     logging:
       driver: 'json-file'
       options:
@@ -31,6 +49,7 @@ services:
     depends_on:
       - database
       - migrations
+      - amazon_s3
     env_file:
       - .env
     logging:
@@ -39,6 +58,6 @@ services:
         max-size: '10m'
         max-file: '3'
 
-# add the new service here
-
-# make sure to use volumes here
+volumes:
+  postgres_data:
+  minio_data:

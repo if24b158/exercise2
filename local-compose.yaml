@@ -5,7 +5,20 @@ services:
       - "127.0.0.1:5432:5432"
     env_file:
       - .env.local
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
-# add the new service here
+  amazon_s3:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    command: server /data --console-address ":9001"
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    env_file:
+      - .env.local
+    volumes:
+      - minio_data:/data
 
-# make sure to use volumes here
+volumes:
+  postgres_data:
+  minio_data:
